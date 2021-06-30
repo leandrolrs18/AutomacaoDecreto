@@ -5,6 +5,7 @@ from datetime import  date
 #from cx_Freeze import setup, Executable
 import sys
 
+
 def get_all_links(driver):
     links = []
     texto = []
@@ -54,6 +55,7 @@ def start(P_chave, Dincial, Dfinal, paginas):
     linkcerto = list(dict.fromkeys(linkcerto))
     #print('a', linkcerto)
     for link in linkcerto:
+        web.get(link)
         d = link.split("data=", 1)[1]
         n = d.split("&", 1)[0]
         l = link.split("doc=", 1)[1]
@@ -73,51 +75,51 @@ def informacoes(links, web):
            
     return result      
     
+
+def filtrar(texto):
+    ndata = []
+    filtrado = []
+    informacoes = []
+    for i in range(0,len(texto)):
+        array = texto[i].split('\n')
+        ndata.append(array)
+    for j in range(0, len(ndata)):
+        if (ndata[j][1].find("DECRETO") != -1) :
+            filtrado.append(ndata[j])
+    #print('filtrados', filtrado)
+    print('t', filtrado)
+    for j in range(0, len(filtrado)):
+        informacoes.append((filtrado[j][1].split(",", 1)[0]))
+        informacoes.append(filtrado[j][2])
+    print ('info', informacoes)
+    return filtrado, informacoes
+
 def gerarExcel (texto):
     today = date.today()
     today = str(today) +'.xlsx'
     #print(today)
     with xlsxwriter.Workbook(today) as workbook:
         worksheet = workbook.add_worksheet()
-
+        cont = 0;
         for row_num, data in enumerate(texto):
             print(row_num)#, str(data))
-            #worksheet.write_string(row_num, 0 , str(data))
-
-def filtrar(texto):
-    ndata = []
-    filtrado = []
-    for i in range(0,len(texto)):
-        array = texto[i].split('\n')
-        ndata.append(array)
-    #print('fd', ndata)    
-    #print('ndata', ndata)
-    #print('ndata1', ndata[0])
-    #print('ndata2', ndata[0][1])
-    #print('ndata3', ndata[0][2])
-    for j in range(0, len(ndata)):
-        if (ndata[j][1].find("DECRETO") != -1) :
-            filtrado.append(ndata[j])
-    #print('filtrados', filtrado)
-    return filtrado
-
+            for i in range(0, 2):
+                print('i', i)
+                worksheet.write_string(row_num, i , str(texto[cont]))
+                cont = cont + 1
+            if row_num == (len(texto)/2-1):
+                break
+    
 if __name__ == '__main__':
     
     links = []
     texto = []
     links, web = start("Decreto nº fátima bezerra", "26/04/2021", "26/06/2021", 1)  # parametros: palavra de pesquisa e numero de pag pesquisadas 
-    texto = informacoes(links, web) 
-    #print('texto', texto) 
-    filtrados = filtrar(texto)
-    gerarExcel(filtrados)
+    texto = informacoes(links, web)  
+    filtrados, info = filtrar(texto)
+    gerarExcel(info)
     
 
 
-#falta criar um executável
-# usar regex caso queira salvar o texto de um jeito diferente 
-
-
-
-#//*[@id="dgDocumentos"]/tbody/tr[2]/td[3]
-
-#//*[@id="dgDocumentos"]/tbody/tr[11]/td[3]
+#falta criar um executável - qt pode ser uma opção
+# falta nº do diário - pegar o link antigo, tentar abrir, pegar informações certas, salvar no documento
