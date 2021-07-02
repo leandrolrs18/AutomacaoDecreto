@@ -37,7 +37,7 @@ def start(P_chave, Dincial, Dfinal, paginas):
     Submit = web.find_element_by_xpath('//*[@id="submit-busca-simples"]')
     web.execute_script("arguments[0].click();", Submit)
     #Submit.click()
-    time.sleep(2)
+    #time.sleep(2)
 
     while True:
         links, texxto = get_all_links(web);   
@@ -56,7 +56,7 @@ def start(P_chave, Dincial, Dfinal, paginas):
     #print('a', linkcerto)
     for link in linkcerto:
         web.get(link)
-        time.sleep(2)
+        #time.sleep(2)
         info2.append(web.find_element_by_id('docinf').text)
         d = link.split("data=", 1)[1]
         n = d.split("&", 1)[0]
@@ -69,7 +69,7 @@ def informacoes(links, web):
     result = []
     for i in links:
         web.get(i)
-        time.sleep(2)
+        #time.sleep(2)
         conteud = web.find_elements_by_class_name("WordSection1")
         for element in conteud:
             result.append(element.text)
@@ -82,6 +82,7 @@ def filtrar(texto, info2):
     filtrado = []
     informacoes = []
     info3 = []
+    info4 = []
     for i in range(0,len(texto)):
         array = texto[i].split('\n')
         ndata.append(array)
@@ -94,9 +95,17 @@ def filtrar(texto, info2):
     for j in range(0, len(filtrado)):
         informacoes.append((filtrado[j][1].split(",", 1)[0]))
         informacoes.append(filtrado[j][2])
-    print ('info', informacoes)
 
-    return filtrado, informacoes, info3
+    print ('info', informacoes)
+    for j in range(0, len(info3)):
+       a = info3[j].split("em:", 1)[1]
+       b = a.split("Edição", 1)[0]
+       c = info3[j].split("Diária:", 1)[1]
+       info4.append(b)
+       info4.append(c)
+
+
+    return filtrado, informacoes, info4
 
 def gerarExcel (texto, texto2):
     today = date.today()
@@ -104,16 +113,17 @@ def gerarExcel (texto, texto2):
     #print(today)
     with xlsxwriter.Workbook(today) as workbook:
         worksheet = workbook.add_worksheet()
-        cont = 0;
+        cont = 0
+        cont1 = 0
         for row_num, data in enumerate(texto):
             print(row_num)#, str(data))
-            for i in range(0, 5):
+            for i in range(0, 4):
                 if(i<2) :
                     worksheet.write_string(row_num, i , str(texto[cont]))
                     cont = cont + 1
                 else:
-                    worksheet.write_string(row_num, i , str(texto2[cont]))    
-                    cont = cont + 1
+                    worksheet.write_string(row_num, i , str(texto2[cont1]))    
+                    cont1 = cont1 + 1
             if row_num == (len(texto)/2-1):
                 break
     
@@ -123,7 +133,7 @@ if __name__ == '__main__':
     texto = []
     info2 = []
     info3 = []
-    links, web, info2 = start("Decreto nº fátima bezerra", "26/04/2021", "26/06/2021", 1)  # parametros: palavra de pesquisa e numero de pag pesquisadas 
+    links, web, info2 = start("Decreto nº fátima bezerra", "01/01/2015", "02/07/2021", 340)  # parametros: palavra de pesquisa e numero de pag pesquisadas 
     texto = informacoes(links, web)  
     filtrados, info, info3 = filtrar(texto, info2)
     print('info3', info3)
