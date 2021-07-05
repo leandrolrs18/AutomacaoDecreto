@@ -57,6 +57,7 @@ def start(P_chave, Dincial, Dfinal, paginas):
     for link in linkcerto:
         web.get(link)
         #time.sleep(2)
+        #if ()
         info2.append(web.find_element_by_id('docinf').text)
         d = link.split("data=", 1)[1]
         n = d.split("&", 1)[0]
@@ -98,11 +99,15 @@ def filtrar(texto, info2):
 
     print ('info', informacoes)
     for j in range(0, len(info3)):
-       a = info3[j].split("em:", 1)[1]
-       b = a.split("Edição", 1)[0]
-       c = info3[j].split("Diária:", 1)[1]
-       info4.append(b)
-       info4.append(c)
+        print("doc : " , info3[j] )
+        if(info3[j].find("em:")!= -1) :
+            a = info3[j].split("em:", 1)[1]
+        if(info3[j].find("Edição")!= -1) :
+            b = a.split("Edição", 1)[0]
+        if(info3[j].find("Diária:")!= -1) :
+            c = info3[j].split("Diária:", 1)[1]
+        info4.append(b)
+        info4.append(c)
 
 
     return filtrado, informacoes, info4
@@ -133,7 +138,7 @@ if __name__ == '__main__':
     texto = []
     info2 = []
     info3 = []
-    links, web, info2 = start("Decreto nº fátima bezerra", "01/01/2015", "02/07/2021", 340)  # parametros: palavra de pesquisa e numero de pag pesquisadas 
+    links, web, info2 = start("Decreto nº fátima bezerra", "01/01/2017", "31/12/2017", 15)  # parametros: palavra de pesquisa e numero de pag pesquisadas 
     texto = informacoes(links, web)  
     filtrados, info, info3 = filtrar(texto, info2)
     print('info3', info3)
@@ -149,3 +154,8 @@ if __name__ == '__main__':
 #criar titulos de colunas no excel
 
 #erro comum: quando volta o elemento, tem que ter o ".text" no findby...
+
+#//*[@id="ACERVO"]/dl[1]/dd[2]/a
+
+#//*[@id="ACERVO"]/dl[50]/dd[2]/a
+
